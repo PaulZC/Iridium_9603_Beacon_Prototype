@@ -90,8 +90,8 @@
 
 #include <RTCZero.h> // M0 Real Time Clock
 RTCZero rtc; // Create an rtc object
-int BEACON_INTERVAL = 10; // Define how often messages are sent in MINUTES (suggested values: 10,12,15,20,30,60,120,180,240)
-// BEACON_INTERVAL can be modified during code execution e.g. when iterationCounter reaches a value [Line 284-285]
+int BEACON_INTERVAL = 10; // Define how often messages are sent in MINUTES (suggested values: 10,12,15,20,30,60,120,180,240) (max 1440)
+// BEACON_INTERVAL can be modified during code execution e.g. when iterationCounter reaches a value [Line 286-287]
 
 // MPL3115A2
 #include <Wire.h>
@@ -136,15 +136,17 @@ void SERCOM1_Handler()
 // RTC alarm interrupt
 void alarmMatch()
 {
-  int rtc_mins = (rtc.getMinutes() + BEACON_INTERVAL) % 60; // Read the RTC minutes; Increase by BEACON_INTERVAL; Compensate for 60 minute roll over
-  rtc.setAlarmMinutes(rtc_mins); // Set next alarm time (minutes)
-  rtc.enableAlarm(rtc.MATCH_MMSS); // Alarm Match on minutes and seconds
-  if (BEACON_INTERVAL > 60) { // If BEACON_INTERVAL is greater than an hour
-    // Read the RTC hours; Increase by the number of whole hours in BEACON_INTERVAL; Compensate for 24 hour roll over
-    int rtc_hours = (rtc.getHours() + (BEACON_INTERVAL / 60)) % 24;
-    rtc.setAlarmHours(rtc_hours); // Set next alarm time (hours)
-    rtc.enableAlarm(rtc.MATCH_HHMMSS); // Alarm Match on hours, minutes and seconds
+  int rtc_mins = rtc.getMinutes(); // Read the RTC minutes
+  int rtc_hours = rtc.getHours(); // Read the RTC hours
+  if (BEACON_INTERVAL > 1440) BEACON_INTERVAL = 1440; // Limit BEACON_INTERVAL to one day
+  rtc_mins = rtc_mins + BEACON_INTERVAL; // Add the BEACON_INTERVAL to the RTC minutes
+  while (rtc_mins >= 60) { // If there has been an hour roll over
+    rtc_mins = rtc_mins - 60; // Subtract 60 minutes
+    rtc_hours = rtc_hours + 1; // Add an hour
   }
+  rtc_hours = rtc_hours % 24; // Check for a day roll over
+  rtc.setAlarmMinutes(rtc_mins); // Set next alarm time (minutes)
+  rtc.setAlarmHours(rtc_hours); // Set next alarm time (hours)
 }
 
 void setup()
@@ -152,6 +154,7 @@ void setup()
   rtc.begin(); // Start the RTC
   rtc.setAlarmSeconds(rtc.getSeconds()); // Initialise RTC Alarm Seconds
   alarmMatch(); // Set next alarm time
+  rtc.enableAlarm(rtc.MATCH_HHMMSS); // Alarm Match on hours, minutes and seconds
   rtc.attachInterrupt(alarmMatch); // Attach alarm interrupt
   
   pinMode(ledPin, OUTPUT); // Adalogger Red LED
@@ -280,7 +283,6 @@ void loop()
   ++iterationCounter; // Increment iterationCounter
 
   // Update BEACON_INTERVAL if required (comment these lines out if you want BEACON_INTERVAL to remain constant)
-  // Remember BEACON_INTERVAL is an int, so don't get too carried away!
   //if (iterationCounter > 12) BEACON_INTERVAL = 60; // Send every 10 mins for the first two hours then drop to once per hour
   //if (iterationCounter > 250) BEACON_INTERVAL = 180; // After ten days, drop to once every three hours
   
