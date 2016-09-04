@@ -25,7 +25,8 @@ with a dedicated circuit board. Designing one is the next job on the things-to-d
 "IridiumSBDBeacon.ino" contains code that seems to work very nicely.
 You can adjust the message timing (BEACON_INTERVAL) to suit your needs.
 
-Based on Mikal Hart's IridiumSBD Beacon example: https://github.com/mikalhart/IridiumSBD
+With grateful thanks to Mikal Hart:
+Based on Mikal's IridiumSBD Beacon example: https://github.com/mikalhart/IridiumSBD
 Requires Mikal's TinyGPS library: https://github.com/mikalhart/TinyGPS
 and PString: http://arduiniana.org/libraries/pstring/
 

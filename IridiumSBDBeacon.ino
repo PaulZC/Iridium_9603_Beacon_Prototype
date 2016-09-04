@@ -2,7 +2,8 @@
 // # Paul Clark's Iridium 9603 Beacon #
 // ####################################
 
-// Based on Mikal Hart's IridiumSBD Beacon example: https://github.com/mikalhart/IridiumSBD
+// With grateful thanks to Mikal Hart:
+// Based on Mikal's IridiumSBD Beacon example: https://github.com/mikalhart/IridiumSBD
 // Requires Mikal's TinyGPS library: https://github.com/mikalhart/TinyGPS
 // and PString: http://arduiniana.org/libraries/pstring/
 
