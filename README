@@ -1,0 +1,108 @@
+####################################
+# Paul Clark's Iridium 9603 Beacon #
+####################################
+
+Design and code for a prototype Iridium 9603 Beacon
+Suitable for high altitude ballooning and other applications
+
+Sends GPS location, pressure (altitude), temperature and battery voltage as Short Burst Data messages
+
+Hardware is based on the Adafuit Feather Adalogger M0 + Ultimate GPS + MPL3115A2
+The 9603 is mounted on a Satelligent 9603-DIP
+Power for the 9603 is provided by a Linear Technology LTC3225 Supercapacitor Charger
+
+You can find a photo of the prototype in "Iridium_9603_Beacon_Prototype.pdf", together
+with links for the components
+
+The wiring is shown more clearly in "Iridium_9603_Beacon_Prototype_Fritzing.pdf"
+
+"Iridium_9603_Beacon_Prototype_Battery_Test.png" shows how well the system behaves running off
+a 1000mAh LiPo cell. Sending once per hour, the battery should last approx. a month.
+
+"Iridium_9603_Beacon_Mass_Budget.pdf" shows that it should be possible to get the mass down to ~70g
+with a dedicated circuit board. Designing one is the next job on the things-to-do list.
+
+"IridiumSBDBeacon.ino" contains code that seems to work very nicely.
+You can adjust the message timing (BEACON_INTERVAL) to suit your needs.
+
+Based on Mikal Hart's IridiumSBD Beacon example: https://github.com/mikalhart/IridiumSBD
+Requires Mikal's TinyGPS library: https://github.com/mikalhart/TinyGPS
+and PString: http://arduiniana.org/libraries/pstring/
+
+With grateful thanks to:
+Adafruit: https://learn.adafruit.com/using-atsamd21-sercom-to-add-more-spi-i2c-serial-ports/creating-a-new-serial
+MartinL: https://forum.arduino.cc/index.php?topic=341054.msg2443086#msg2443086
+
+Hacked by Paul to run on the Adafruit Feather M0 (Adalogger)
+https://www.adafruit.com/products/2796
+GPS data provided by Adafruit Ultimate GPS Breakout or Ultimate GPS FeatherWing
+https://www.adafruit.com/products/746
+https://www.adafruit.com/products/3133
+(Don't fit the CR1220 back-up battery. VBAT is provided by the Adalogger 3V rail.)
+Pressure (altitude) and temperature provided by Sparkfun MPL3115A2 Breakout
+https://www.sparkfun.com/products/11084
+The Adafruit MPL3115A2 Breakout will work too
+https://www.adafruit.com/products/1893
+Requires Adafruit's MPL3115A2 library
+https://github.com/adafruit/Adafruit_MPL3115A2_Library
+
+Uses RTCZero to provide sleep functionality (on the M0)
+https://github.com/arduino-libraries/RTCZero
+
+With grateful thanks to CaveMoa for his SimpleSleepUSB example
+https://github.com/cavemoa/Feather-M0-Adalogger
+https://github.com/cavemoa/Feather-M0-Adalogger/tree/master/SimpleSleepUSB
+Note: you will need to close and re-open your serial monitor each time the M0 wakes up
+
+Iridium 9603 is interfaced to Adalogger using Serial2
+D6 (Port A Pin 20) = Enable (Sleep) : Connect to 9603 ON/OFF Pin 5
+D10 (Port A Pin 18) = Serial2 TX : Connect to 9603 Pin 6
+D12 (Port A Pin 19) = Serial2 RX : Connect to 9603 Pin 7
+A3 / D17 (Port A Pin 4) = Network Available : Connect to 9603 Pin 19
+Iridium 9603 is powered from Linear Technology LTC3225 SuperCapacitor Charger
+(fitted with 2 x 1F 2.7V caps e.g. Bussmann HV0810-2R7105-R)
+to provide the 1.3A peak current when the 9603 is transmitting
+http://www.linear.com/product/LTC3225
+http://www.linear.com/product/LTC3225#demoboards
+D5 (Port A Pin 15) = LTC3225 ~Shutdown
+A1 / D15 (Port B Pin 8) = LTC3225 PGOOD
+Connect LTC3225 VIN to Adalogger VBAT
+Connect LTC3225 GND to Adalogger GND
+Connect LTC3225 VOUT to Iridium 9603 EXT_PWR Pin 1 + 2
+Connect LTC3225 GND to Iridium 9603 EXT_GND Pin 3 + 4
+Connect 9603 RTS Pin 13 to SIG_GND Pin 18 (9603 won't communicate without this)
+Connect 9603 DTR Pin 14 to SIG_GND Pin 15 (9603 won't communicate without this)
+
+Ultimate GPS is interfaced to Adalogger using Serial1
+D1 (Port A Pin 10) = Serial1 TX : Connect to GPS RX
+D0 (Port A Pin 11) = Serial1 RX : Connect to GPS TX
+D11 (Port A Pin 16) = GPS ENable : Connect to GPS EN(ABLE)
+Connect Ultimate GPS VIN to Adalogger VBAT
+Connect Ultimate GPS GND to Adalogger GND
+Connect Ultimate GPS VBAT to Adalogger 3V (no need for a CR1220 backup battery)
+
+Adalogger has a built-in SD card slot
+D22 (Port A Pin 12) = MISO : Connected to SD Card
+D23 (Port B Pin 10) = MOSI : Connected to SD Card
+D24 (Port B Pin 11) = SCK : Connected to SD Card
+
+MPL3115A2 Pressure (Altitude) and Temperature Sensor
+D20 (Port A Pin 22) = SDA : Connect to MPL3115A2 SDA
+D21 (Port A Pin 23) = SCL : Connect to MPL3115A2 SCL
+Connect MPL3115A2 VCC/Vin to Ultimate GPS 3.3Vout (so GPS_EN can disable both GPS and MPL3115A2 to save power)
+Connect MPL3115A2 GND to Adalogger GND
+
+More Adalogger pins
+D13 (Port A Pin 17) = Red LED
+D9 (Port A Pin 7) = AIN 7 : Battery Voltage / 2
+D8 (Port A Pin 6) = Green LED
+D16 / A2 (Port B Pin 9) : Reserve for (e.g.) DS3231 RTC Featherwing Interrupt
+
+If you are using the LTC3225 demo circuit (1220B):
+Set VOUT_SELECT to 4.8V (Connect VSEL to GND)
+Set ICHRG to 150mA (Connect PROG to GND via 15k in parallel with 60.4k)
+Remove the Run/SHDN link (the Adalogger controls the SHDN pin)
+Remove the 0.25F low profile capacitor from the rear of the PCB
+Fit two (e.g.) Bussmann HV0810-2R7105-R 1F 2.7V caps in OPT C3 and OPT C4
+There is no thermal relief on the OPT C4 GND pin and it can be difficult to solder
+You might have to link the cap leg to the low profile cap negative pad instead
