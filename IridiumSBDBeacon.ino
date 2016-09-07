@@ -96,7 +96,7 @@
 #include <RTCZero.h> // M0 Real Time Clock
 RTCZero rtc; // Create an rtc object
 int BEACON_INTERVAL = 10; // Define how often messages are sent in MINUTES (suggested values: 10,12,15,20,30,60,120,180,240) (max 1440)
-// BEACON_INTERVAL can be modified during code execution e.g. when iterationCounter reaches a value [Line 286-287]
+// BEACON_INTERVAL can be modified during code execution e.g. when iterationCounter reaches a value [Line 293-294]
 
 // MPL3115A2
 #include <Wire.h>
@@ -124,8 +124,8 @@ static const int networkAvailable = 17; // 9602 Network Available on pin D17
 static const int LTC3225shutdown = 5; // LTC3225 ~Shutdown on pin D5
 static const int LTC3225PGOOD = 15; // LTC3225 PGOOD on pin A1 / D15
 static const int GPS_EN = 11; // Ultimate GPS Enable on pin D11
-#define GPS_ON LOW // HIGH for the Ultimate GPS Breakout, LOW for the Ultimate GPS FeatherWing
-#define GPS_OFF HIGH // LOW for the Ultimate GPS Breakout, HIGH for the Ultimate GPS FeatherWing
+#define GPS_ON HIGH // HIGH for the Ultimate GPS Breakout, LOW for the Ultimate GPS FeatherWing
+#define GPS_OFF LOW // LOW for the Ultimate GPS Breakout, HIGH for the Ultimate GPS FeatherWing
 
 // IridiumSBD Callback
 bool ISBDCallback()
