@@ -36,10 +36,14 @@ MartinL: https://forum.arduino.cc/index.php?topic=341054.msg2443086#msg2443086
 
 Hacked by Paul to run on the Adafruit Feather M0 (Adalogger)
 https://www.adafruit.com/products/2796
-GPS data provided by Adafruit Ultimate GPS Breakout or Ultimate GPS FeatherWing
+GPS data provided by Adafruit Ultimate GPS Breakout
 https://www.adafruit.com/products/746
-https://www.adafruit.com/products/3133
-(Don't fit the CR1220 back-up battery. VBAT is provided by the Adalogger 3V rail.)
+Don't fit the CR1220 back-up battery. VBAT can be provided by the Adalogger 3V rail.
+You can use the Ultimate GPS FeatherWing (https://www.adafruit.com/products/3133) but:
+  You will need to invert the GPS Enable (GPS_EN)
+  You won't be able to power down the MPL3115A2
+  You can still use the Adalogger 3V rail instead of the CR1220 battery, but 
+  you will need to solder a wire to the BAT pad on the bottom of the FeatherWing
 Pressure (altitude) and temperature provided by Sparkfun MPL3115A2 Breakout
 https://www.sparkfun.com/products/11084
 The Adafruit MPL3115A2 Breakout will work too

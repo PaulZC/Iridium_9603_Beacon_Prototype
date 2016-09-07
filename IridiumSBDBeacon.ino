@@ -13,10 +13,14 @@
 
 // Hacked by Paul to run on the Adafruit Feather M0 (Adalogger)
 // https://www.adafruit.com/products/2796
-// GPS data provided by Adafruit Ultimate GPS Breakout or Ultimate GPS FeatherWing
+// GPS data provided by Adafruit Ultimate GPS Breakout
 // https://www.adafruit.com/products/746
-// https://www.adafruit.com/products/3133
-// (Don't fit the CR1220 back-up battery. VBAT is provided by the Adalogger 3V rail.)
+// Don't fit the CR1220 back-up battery. VBAT can be provided by the Adalogger 3V rail.
+// You can use the Ultimate GPS FeatherWing (https://www.adafruit.com/products/3133) but:
+//   You will need to invert the GPS Enable (GPS_EN)
+//   You won't be able to power down the MPL3115A2
+//   You can still use the Adalogger 3V rail instead of the CR1220 battery, but 
+//   you will need to solder a wire to the BAT pad on the bottom of the FeatherWing
 // Pressure (altitude) and temperature provided by Sparkfun MPL3115A2 Breakout
 // https://www.sparkfun.com/products/11084
 // The Adafruit MPL3115A2 Breakout will work too
@@ -120,6 +124,8 @@ static const int networkAvailable = 17; // 9602 Network Available on pin D17
 static const int LTC3225shutdown = 5; // LTC3225 ~Shutdown on pin D5
 static const int LTC3225PGOOD = 15; // LTC3225 PGOOD on pin A1 / D15
 static const int GPS_EN = 11; // Ultimate GPS Enable on pin D11
+#define GPS_ON LOW // HIGH for the Ultimate GPS Breakout, LOW for the Ultimate GPS FeatherWing
+#define GPS_OFF HIGH // LOW for the Ultimate GPS Breakout, HIGH for the Ultimate GPS FeatherWing
 
 // IridiumSBD Callback
 bool ISBDCallback()
@@ -166,8 +172,8 @@ void setup()
   digitalWrite(LTC3225shutdown, HIGH); // Enable the LTC3225 supercapacitor charger
   pinMode(LTC3225PGOOD, INPUT); // Define an input for the LTC3225 Power Good signal
   
-  pinMode(GPS_EN, OUTPUT); // Adafruit Ultimate GPS Regulator enable
-  digitalWrite(GPS_EN, HIGH); // Enable the Ultimate GPS
+  pinMode(GPS_EN, OUTPUT); // Adafruit Ultimate GPS enable
+  digitalWrite(GPS_EN, GPS_ON); // Enable the GPS (and MPL3115A2)
   
   pinMode(networkAvailable, INPUT); // Define an input for the Iridium 9603 Network Available signal
   
@@ -341,7 +347,7 @@ void loop()
 
   // Save power by disabling both GPS and Iridium supercapacitor charger
   Wire.end(); // Stop I2C comms
-  digitalWrite(GPS_EN, LOW); // Disable the Ultimate GPS and MPL3115A2
+  digitalWrite(GPS_EN, GPS_OFF); // Disable the GPS (and MPL3115A2)
   digitalWrite(LTC3225shutdown, LOW); // Disable the LTC3225 supercapacitor charger
 
   // Close and detach the serial console (as per CaveMoa's SimpleSleepUSB)
@@ -372,7 +378,7 @@ void loop()
   pinMode(greenLED, OUTPUT);
 
   // Re-enable GPS and Iridium supercapacitor charger
-  digitalWrite(GPS_EN, HIGH); // Enable the Ultimate GPS and MPL3115A2
+  digitalWrite(GPS_EN, GPS_ON); // Enable the GPS (and MPL3115A2)
   digitalWrite(LTC3225shutdown, HIGH); // Enable the LTC3225 supercapacitor charger
 
   // flash red and green LEDs on wake
