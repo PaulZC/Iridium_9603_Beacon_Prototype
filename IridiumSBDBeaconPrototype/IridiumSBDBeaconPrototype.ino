@@ -1,6 +1,6 @@
-// ####################################
-// # Paul Clark's Iridium 9603 Beacon #
-// ####################################
+// #################################
+// # Iridium 9603 Beacon Prototype #
+// #################################
 
 // With grateful thanks to Mikal Hart:
 // Based on Mikal's IridiumSBD Beacon example: https://github.com/mikalhart/IridiumSBD
@@ -124,8 +124,8 @@ static const int networkAvailable = 17; // 9602 Network Available on pin D17
 static const int LTC3225shutdown = 5; // LTC3225 ~Shutdown on pin D5
 static const int LTC3225PGOOD = 15; // LTC3225 PGOOD on pin A1 / D15
 static const int GPS_EN = 11; // Ultimate GPS Enable on pin D11
-#define GPS_ON HIGH // HIGH for the Ultimate GPS Breakout, LOW for the Ultimate GPS FeatherWing
-#define GPS_OFF LOW // LOW for the Ultimate GPS Breakout, HIGH for the Ultimate GPS FeatherWing
+#define GPS_ON LOW // HIGH for the Ultimate GPS Breakout, LOW for the Ultimate GPS FeatherWing
+#define GPS_OFF HIGH // LOW for the Ultimate GPS Breakout, HIGH for the Ultimate GPS FeatherWing
 
 // IridiumSBD Callback
 bool ISBDCallback()

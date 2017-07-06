@@ -1,6 +1,6 @@
-####################################
-# Paul Clark's Iridium 9603 Beacon #
-####################################
+##############################################
+# Paul Clark's Iridium 9603 Beacon Prototype #
+##############################################
 
 Design and code for a prototype Iridium 9603 Beacon
 Suitable for high altitude ballooning and other applications
@@ -22,7 +22,7 @@ a 1000mAh LiPo cell. Sending once per hour, the battery should last approx. a mo
 "Iridium_9603_Beacon_Mass_Budget.pdf" shows that it should be possible to get the mass down to ~70g
 with a dedicated circuit board. Designing one is the next job on the things-to-do list.
 
-"IridiumSBDBeacon.ino" contains code that seems to work very nicely.
+"IridiumSBDBeaconPrototype.ino" contains code that seems to work very nicely.
 You can adjust the message timing (BEACON_INTERVAL) to suit your needs.
 
 With grateful thanks to Mikal Hart:
